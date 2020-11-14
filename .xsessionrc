@@ -1,0 +1,3 @@
+# Enable Tapping and Natural Scrolling
+xinput --set-prop "Synaptics TM3418-002" "libinput Tapping Enabled" 1
+xinput --set-prop "Synaptics TM3418-002" "libinput Natural Scrolling Enabled" 1

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+addPath() {
+  export PATH="$1:$PATH"
+}
+
+# User-only symbolic links
+addPath "~/bin";

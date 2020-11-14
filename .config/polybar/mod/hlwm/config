@@ -1,0 +1,8 @@
+; This module was found at:
+; https://gist.github.com/olmokramer/b28ff8ed5fd366e3ebb23b79915ec850
+
+[module/hlwm]
+type = custom/script
+exec-if = ps -C herbstluftwm >/dev/null 2>&1
+exec = MONITOR=0 ~/.config/polybar/mod/hlwm/hlwm.sh
+tail = true

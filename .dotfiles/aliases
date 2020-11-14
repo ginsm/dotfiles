@@ -1,0 +1,33 @@
+#!/bin/sh
+
+# ls aliases and the like
+alias ls='ls --color=auto'
+alias ll='ls -alF'
+alias la='ls -lA'
+alias l='ls -CF'
+alias cl='clear;ls'
+
+# Search your bash history
+alias ghist='history|grep'
+
+# Remove directory (-f might be necessary for git directories)
+alias rmr='rm -r'
+
+# Git commit
+alias gcm='git commit -m $1'
+
+# Git status
+alias gsts='git status'
+
+# Git add
+alias gadd='git add "$@"'
+
+# Git diff
+alias gdiff='git diff "$@"'
+
+# Git push
+alias gpush='git push'
+
+if [ -f "$ALIASES.local" ]; then
+  . "$ALIASES.local"
+fi

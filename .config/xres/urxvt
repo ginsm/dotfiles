@@ -1,0 +1,32 @@
+! This file contains configuration variables and declarations for URxvt (rxvt-unicode).
+
+! Set the fonts and their sizes
+#define  FontSize  12
+
+URxvt.font:         	xft:Consolas:size=FontSize,xft:Font Awesome 5 Free Solid:size=FontSize,xft:Font Awesome 5 Free Brands Regular:size=FontSize,xft:Font Awesome 5 Free Regular:size=FontSize
+URxvt.boldFont:     	xft:Consolas Bold:size=FontSize
+URxvt.italicFont:   	xft:Consolas Italic:size=FontSize
+
+URxvt.letterSpace: 1;
+
+! No Scrollbar
+URxvt.scrollBar:         false
+
+! Padding
+URxvt.internalBorder:    20
+
+! Transparency (Native -- utilizing nitrogen)
+URxvt.transparent:       true
+URxvt.shading:           40
+
+! Cursor
+URxvt.cursorUnderline: true
+URxvt.cursorBlink: true
+
+! Add new copy and paste keybinds
+URxvt.keysym.Shift-Control-V: eval:paste_clipboard
+URxvt.keysym.Shift-Control-C: eval:selection_to_clipboard
+
+! Disable the old copy and paste keybinds
+URxvt.keysym.Control-Meta-c: builtin-string:
+URxvt.keysym.Control-Meta-v: builtin-string:
