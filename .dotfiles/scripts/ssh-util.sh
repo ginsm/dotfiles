@@ -12,7 +12,7 @@
 #                SSH Profile Generation               #
 # ------------------------------------------------------- #
 
-overwrite_check() {
+overwrite_ssh_profile_check() {
   local directory="$1";
   local question="That profile already exists. Do you wish to overwrite it (y/N)? "
   local answer;
@@ -47,7 +47,7 @@ overwrite_check() {
   fi  
 }
 
-generate_profile() {
+generate_ssh_profile() {
   # Alert the user that they will be prompted.
   if (( 5 > $# )); then
     echo -e "Usage: ssh-util -g <profile> <user> <ip> <port> [comment]";
@@ -63,7 +63,7 @@ generate_profile() {
 
   # Location of the profile and whether it exists.
   local directory="$SSHUTIL_DIR/profiles/$profile";
-  local overwrite_status="$(overwrite_check $directory)";
+  local overwrite_status="$(overwrite_ssh_profile_check $directory)";
 
   # Ensure the directory (profile) does not exist.
   if [ "$overwrite_status" == "exit" ]; then
@@ -92,11 +92,11 @@ generate_profile() {
     echo -e "include $directory/host.config" >> "$SSHUTIL_DIR/hosts";
   fi
 
-  generate_key $profile $comment
+  generate_ssh_key $profile $comment
 }
 
-generate_key() {
-  # Passed via generate_profile function.
+generate_ssh_key() {
+  # Passed via generate_ssh_profile function.
   local profile="$1";
   local comment="$2";
 
@@ -110,10 +110,28 @@ generate_key() {
 
 
 # ------------------------------------------------------- #
+#                     Edit SSH Profile                    #
+# ------------------------------------------------------- #
+
+edit_ssh_profile() {
+  local profile="$1";
+  vim "$SSHUTIL_DIR/profiles/$profile/host.config";
+}
+
+
+# ------------------------------------------------------- #
+#                    List SSH Profiles                    #
+# ------------------------------------------------------- #
+
+list_ssh_profiles() {
+  echo -e "$(ls -A $SSHUTIL_DIR/profiles)"
+}
+
+# ------------------------------------------------------- #
 #                   File Transfer (rsync)                 #
 # ------------------------------------------------------- #
 
-transfer_files() {
+transfer_files_rsync() {
   local profile="$1";
   local location="$2";
 
@@ -133,10 +151,18 @@ transfer_files() {
 
 ssh-util() {
   if [[ "$1" == "-g" || "$1" == "--generate" ]]; then
-    generate_profile "${@:2}";
+    generate_ssh_profile "${@:2}";
   fi
 
   if [[ "$1" == "-t" || "$1" == "--transfer" ]]; then
-    transfer_files "$@";
+    transfer_files_rsync "$@";
+  fi
+
+  if [[ "$1" == "-e" || "$1" == "--edit" ]]; then
+    edit_ssh_profile "${@:2}";
+  fi
+
+  if [[ "$1" == "-l" || "$1" == "--list" ]]; then
+    list_ssh_profiles;
   fi
 }
