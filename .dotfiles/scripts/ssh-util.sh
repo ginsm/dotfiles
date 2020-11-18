@@ -1,12 +1,14 @@
 #!/bin/sh
 
-# This script allows for easily generating SSH keys (to a desired location),
-# transfering to different profiles via rsync, and connecting to profiles.
+# This script allows for easily generating, editing, and listing SSH
+# profiles, and transferring to remote servers via rsync.
 # Set the desired location with $SSHUTIL_DIR.
 
 # Commands:
-# connect -g <profile> <user> <ip> <port> [comment]
-# connect -t <profile> <file(s)> <location>
+# ssh-util (-g|--generate) <profile> <user> <ip> <port> [comment]
+# ssh-util (-t|--transfer) <profile> <file(s)> <location>
+# ssh-util (-e|--edit) <profile>
+# ssh-util (-l|--list)
 
 # ------------------------------------------------------- #
 #                SSH Profile Generation               #
