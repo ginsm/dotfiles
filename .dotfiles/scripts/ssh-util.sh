@@ -6,7 +6,7 @@
 
 # Commands:
 # ssh-util (-g|--generate) <profile> <user> <ip> <port> [comment]
-# ssh-util (-t|--transfer) <profile> <file(s)> <location>
+# ssh-util (-t|--transfer) <profile> <location> <files>
 # ssh-util (-e|--edit) <profile>
 # ssh-util (-l|--list)
 
