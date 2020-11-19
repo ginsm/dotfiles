@@ -6,13 +6,13 @@
 
 # Commands:
 # ssh-util (-g|--generate) <profile> <user> <ip> <port> [comment]    # Generates a SSH profile
-# ssh-util (-vp|--view-pub) <profile>                                # Outputs profile's id_rsa.pub
+# ssh-util (-p|--pubkey) <profile>                                   # Outputs profile's id_rsa.pub
 # ssh-util (-e|--edit) <profile>                                     # Edit a SSH profile
 # ssh-util (-l|--list)                                               # List SSH profiles
 # ssh-util (-t|--transfer) <profile> <location> <files>              # Transfer files to remote server via SSH (rsync)
 
 # ------------------------------------------------------- #
-#                SSH Profile Generation               #
+#                SSH Profile Generation                   #
 # ------------------------------------------------------- #
 
 __su_overwrite_ssh_profile_check() {
@@ -160,6 +160,21 @@ __su_transfer_files_rsync() {
 
 
 # ------------------------------------------------------- #
+#                     Print Help Menu                     #
+# ------------------------------------------------------- #
+
+__su_help_menu() {
+  echo -e "Usage: ssh-util [OPTIONS] \n"
+  echo -e "Options:"
+  echo -e "  -l                                             List available profiles"
+  echo -e "  -g <profile> <user> <ip> <port> [comment]      Generate SSH profile"
+  echo -e "  -e <profile>                                   Edit SSH profile"
+  echo -e "  -p <profile>                                   View SSH profile's id_rsa.pub"
+  echo -e "  -t <profile> <location> <files>                Transfer files to SSH profile"
+}
+
+
+# ------------------------------------------------------- #
 #                 Delegated Flag Handling                 #
 # ------------------------------------------------------- #
 
@@ -170,16 +185,22 @@ __su_command_flag() {
 
   for flag in $flags; do
     if [[ "$flag" == "$issued_flag" ]]; then
+      __su_command_ran="true";
       "__su_$command" "${@:4}";
     fi
   done
 }
 
 ssh-util() {
-  # Delegate command flags
+  __su_command_ran="false";
+
   __su_command_flag "-g --generate" generate_ssh_profile "$@";
-  __su_command_flag "-vp --view-pub" view_profile_pub_key "$@";
+  __su_command_flag "-p --pubkey" view_profile_pub_key "$@";
   __su_command_flag "-e --edit" edit_ssh_profile "$@";
   __su_command_flag "-l --list" list_ssh_profiles "$@";
   __su_command_flag "-t --transfer" transfer_files_rsync "$@";
+
+  if [[ "$__su_command_ran" == "false" ]]; then
+    __su_help_menu
+  fi
 }
