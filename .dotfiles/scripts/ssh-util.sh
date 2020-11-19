@@ -15,7 +15,7 @@
 #                SSH Profile Generation               #
 # ------------------------------------------------------- #
 
-overwrite_ssh_profile_check() {
+__su_overwrite_ssh_profile_check() {
   local directory="$1";
   local question="That profile already exists. Do you wish to overwrite it (y/N)? "
   local answer;
@@ -47,7 +47,7 @@ overwrite_ssh_profile_check() {
   fi  
 }
 
-generate_ssh_profile() {
+__su_generate_ssh_profile() {
   # Alert the user that they will be prompted.
   if (( 5 > $# )); then
     echo -e "Usage: ssh-util -g <profile> <user> <ip> <port> [comment]";
@@ -63,7 +63,7 @@ generate_ssh_profile() {
 
   # Location of the profile and whether it exists.
   local directory="$SSHUTIL_DIR/profiles/$profile";
-  local overwrite_status="$(overwrite_ssh_profile_check $directory)";
+  local overwrite_status="$(__su_overwrite_ssh_profile_check $directory)";
 
   # Ensure the directory (profile) does not exist.
   if [ "$overwrite_status" == "exit" ]; then
@@ -92,11 +92,11 @@ generate_ssh_profile() {
     echo -e "include $directory/host.config" >> "$SSHUTIL_DIR/hosts";
   fi
 
-  generate_ssh_key "$profile" "$comment";
+  __su_generate_ssh_key "$profile" "$comment";
 }
 
-generate_ssh_key() {
-  # Passed via generate_ssh_profile function.
+__su_generate_ssh_key() {
+  # Passed via __su_generate_ssh_profile function.
   local profile="$1";
   local comment="$2";
 
@@ -113,7 +113,7 @@ generate_ssh_key() {
 #                     Edit SSH Profile                    #
 # ------------------------------------------------------- #
 
-edit_ssh_profile() {
+__su_edit_ssh_profile() {
   local profile="$1";
   vim "$SSHUTIL_DIR/profiles/$profile/host.config";
 }
@@ -123,7 +123,7 @@ edit_ssh_profile() {
 #                    List SSH Profiles                    #
 # ------------------------------------------------------- #
 
-list_ssh_profiles() {
+__su_list_ssh_profiles() {
   echo -e "$(ls -A $SSHUTIL_DIR/profiles)"
 }
 
@@ -132,7 +132,7 @@ list_ssh_profiles() {
 #                   View Profile Pub Key                  #
 # ------------------------------------------------------- #
 
-view_profile_pub_key() {
+__su_view_profile_pub_key() {
   local profile="$1";
   echo -e "\"${profile}\" id_rsa.pub"
   echo -e "-------------------------------------------------------";
@@ -145,7 +145,7 @@ view_profile_pub_key() {
 #                   File Transfer (rsync)                 #
 # ------------------------------------------------------- #
 
-transfer_files_rsync() {
+__su_transfer_files_rsync() {
   local profile="$1";
   local location="$2";
 
@@ -155,32 +155,31 @@ transfer_files_rsync() {
     return 0;
   fi
   
-  rsync -hrvz --progress ${@:4} $profile:$location
+  rsync -hrvz --progress ${@:3} $profile:$location
 }
 
 
 # ------------------------------------------------------- #
-#               Delegated Flag Handling              #
+#                 Delegated Flag Handling                 #
 # ------------------------------------------------------- #
 
+__su_command_flag() {
+  local flags="$1";
+  local command="$2";
+  local issued_flag="$3";
+
+  for flag in $flags; do
+    if [[ "$flag" == "$issued_flag" ]]; then
+      "__su_$command" "${@:4}";
+    fi
+  done
+}
+
 ssh-util() {
-  if [[ "$1" == "-g" || "$1" == "--generate" ]]; then
-    generate_ssh_profile "${@:2}";
-  fi
-
-  if [[ "$1" == "-vp" || "$1" == "--view-pub" ]]; then
-    view_profile_pub_key "${@:2}";
-  fi
-
-  if [[ "$1" == "-e" || "$1" == "--edit" ]]; then
-    edit_ssh_profile "${@:2}";
-  fi
-
-  if [[ "$1" == "-l" || "$1" == "--list" ]]; then
-    list_ssh_profiles;
-  fi
-
-  if [[ "$1" == "-t" || "$1" == "--transfer" ]]; then
-    transfer_files_rsync "$@";
-  fi
+  # Delegate command flags
+  __su_command_flag "-g --generate" generate_ssh_profile "$@";
+  __su_command_flag "-vp --view-pub" view_profile_pub_key "$@";
+  __su_command_flag "-e --edit" edit_ssh_profile "$@";
+  __su_command_flag "-l --list" list_ssh_profiles "$@";
+  __su_command_flag "-t --transfer" transfer_files_rsync "$@";
 }
