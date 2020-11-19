@@ -12,6 +12,21 @@
 # ssh-util (-t|--transfer) <profile> <location> <files>              # Transfer files to remote server via SSH (rsync)
 
 # ------------------------------------------------------- #
+#                   Utility Functions                     #
+# ------------------------------------------------------- #
+
+__su_profile_exists() {
+  local directory="$1";
+  if [[ -d "$directory" ]]; then
+    echo "true";
+  else
+    echo "false";
+  fi
+}
+
+
+
+# ------------------------------------------------------- #
 #                SSH Profile Generation                   #
 # ------------------------------------------------------- #
 
@@ -115,7 +130,11 @@ __su_generate_ssh_key() {
 
 __su_edit_ssh_profile() {
   local profile="$1";
-  vim "$SSHUTIL_DIR/profiles/$profile/host.config";
+  if [ "$(__su_profile_exists $SSHUTIL_DIR/profiles/$profile)" == "true" ]; then
+    vim "$SSHUTIL_DIR/profiles/$profile/host.config";
+  else
+    echo -e "ssh-util: That profile does not exist."
+  fi
 }
 
 
@@ -134,10 +153,14 @@ __su_list_ssh_profiles() {
 
 __su_view_profile_pub_key() {
   local profile="$1";
-  echo -e "\"${profile}\" id_rsa.pub"
-  echo -e "-------------------------------------------------------";
-  echo -e "$(cat $SSHUTIL_DIR/profiles/$profile/keys/id_rsa.pub)";
-  echo -e "-------------------------------------------------------";
+  if [ "$(__su_profile_exists $SSHUTIL_DIR/profiles/$profile)" == "true" ]; then
+    echo -e "\"${profile}\" id_rsa.pub"
+    echo -e "-------------------------------------------------------";
+    echo -e "$(cat $SSHUTIL_DIR/profiles/$profile/keys/id_rsa.pub)";
+    echo -e "-------------------------------------------------------";
+  else
+    echo -e "ssh-util: That profile does not exist."
+  fi
 }
 
 
@@ -149,13 +172,17 @@ __su_transfer_files_rsync() {
   local profile="$1";
   local location="$2";
 
-  if (( 3 > $# )); then
-    echo -e "Not enough arguments.";
-    echo -e "Usage: ssh-util -t <profile> <location> <...files>";
-    return 0;
+  if [ "$(__su_profile_exists $SSHUTIL_DIR/profiles/$profile)" == "true" ]; then
+    if (( 3 > $# )); then
+      echo -e "Not enough arguments.";
+      echo -e "Usage: ssh-util -t <profile> <location> <...files>";
+      return 0;
+    fi
+    
+    rsync -hrvz --progress ${@:3} $profile:$location
+  else
+    echo -e "ssh-util: That profile does not exist."
   fi
-  
-  rsync -hrvz --progress ${@:3} $profile:$location
 }
 
 
