@@ -32,7 +32,7 @@ __su_profile_exists() {
 
 __su_overwrite_ssh_profile_check() {
   local directory="$1";
-  local question="That profile already exists. Do you wish to overwrite it (y/N)? "
+  local question="That profile already exists. Do you wish to overwrite it (y/N)? ";
   local answer;
   local asked="false";
 
@@ -133,7 +133,7 @@ __su_edit_ssh_profile() {
   if [ "$(__su_profile_exists $SSHUTIL_DIR/profiles/$profile)" == "true" ]; then
     vim "$SSHUTIL_DIR/profiles/$profile/host.config";
   else
-    echo -e "ssh-util: That profile does not exist."
+    echo -e "ssh-util: That profile does not exist.";
   fi
 }
 
@@ -143,7 +143,7 @@ __su_edit_ssh_profile() {
 # ------------------------------------------------------- #
 
 __su_list_ssh_profiles() {
-  echo -e "$(ls -A $SSHUTIL_DIR/profiles)"
+  echo -e "$(ls -A $SSHUTIL_DIR/profiles)";
 }
 
 
@@ -154,12 +154,12 @@ __su_list_ssh_profiles() {
 __su_view_profile_pub_key() {
   local profile="$1";
   if [ "$(__su_profile_exists $SSHUTIL_DIR/profiles/$profile)" == "true" ]; then
-    echo -e "\"${profile}\" id_rsa.pub"
+    echo -e "\"${profile}\" id_rsa.pub";
     echo -e "-------------------------------------------------------";
     echo -e "$(cat $SSHUTIL_DIR/profiles/$profile/keys/id_rsa.pub)";
     echo -e "-------------------------------------------------------";
   else
-    echo -e "ssh-util: That profile does not exist."
+    echo -e "ssh-util: That profile does not exist.";
   fi
 }
 
@@ -179,9 +179,9 @@ __su_transfer_files_rsync() {
       return 0;
     fi
     
-    rsync -hrvz --progress ${@:3} $profile:$location
+    rsync -hrvz --progress ${@:3} $profile:$location;
   else
-    echo -e "ssh-util: That profile does not exist."
+    echo -e "ssh-util: That profile does not exist.";
   fi
 }
 
@@ -191,13 +191,13 @@ __su_transfer_files_rsync() {
 # ------------------------------------------------------- #
 
 __su_help_menu() {
-  echo -e "Usage: ssh-util [OPTIONS] \n"
-  echo -e "Options:"
-  echo -e "  -l                                             List available profiles"
-  echo -e "  -g <profile> <user> <ip> <port> [comment]      Generate SSH profile"
-  echo -e "  -e <profile>                                   Edit SSH profile"
-  echo -e "  -p <profile>                                   View SSH profile's id_rsa.pub"
-  echo -e "  -t <profile> <location> <files>                Transfer files to SSH profile"
+  echo -e "Usage: ssh-util [OPTIONS] \n";
+  echo -e "Options:";
+  echo -e "  -l                                             List available profiles";
+  echo -e "  -g <profile> <user> <ip> <port> [comment]      Generate SSH profile";
+  echo -e "  -e <profile>                                   Edit SSH profile";
+  echo -e "  -p <profile>                                   View SSH profile's id_rsa.pub";
+  echo -e "  -t <profile> <location> <files>                Transfer files to SSH profile";
 }
 
 
@@ -228,6 +228,6 @@ ssh-util() {
   __su_command_flag "-t --transfer" transfer_files_rsync "$@";
 
   if [[ "$__su_command_ran" == "false" ]]; then
-    __su_help_menu
+    __su_help_menu;
   fi
 }
