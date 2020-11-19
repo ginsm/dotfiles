@@ -5,10 +5,11 @@
 # Set the desired location with $SSHUTIL_DIR.
 
 # Commands:
-# ssh-util (-g|--generate) <profile> <user> <ip> <port> [comment]
-# ssh-util (-t|--transfer) <profile> <location> <files>
-# ssh-util (-e|--edit) <profile>
-# ssh-util (-l|--list)
+# ssh-util (-g|--generate) <profile> <user> <ip> <port> [comment]    # Generates a SSH profile
+# ssh-util (-vp|--view-pub) <profile>                                # Outputs profile's id_rsa.pub
+# ssh-util (-e|--edit) <profile>                                     # Edit a SSH profile
+# ssh-util (-l|--list)                                               # List SSH profiles
+# ssh-util (-t|--transfer) <profile> <location> <files>              # Transfer files to remote server via SSH (rsync)
 
 # ------------------------------------------------------- #
 #                SSH Profile Generation               #
@@ -126,6 +127,20 @@ list_ssh_profiles() {
   echo -e "$(ls -A $SSHUTIL_DIR/profiles)"
 }
 
+
+# ------------------------------------------------------- #
+#                   View Profile Pub Key                  #
+# ------------------------------------------------------- #
+
+view_profile_pub_key() {
+  local profile="$1";
+  echo -e "\"${profile}\" id_rsa.pub"
+  echo -e "-------------------------------------------------------";
+  echo -e "$(cat $SSHUTIL_DIR/profiles/$profile/keys/id_rsa.pub)";
+  echo -e "-------------------------------------------------------";
+}
+
+
 # ------------------------------------------------------- #
 #                   File Transfer (rsync)                 #
 # ------------------------------------------------------- #
@@ -153,8 +168,8 @@ ssh-util() {
     generate_ssh_profile "${@:2}";
   fi
 
-  if [[ "$1" == "-t" || "$1" == "--transfer" ]]; then
-    transfer_files_rsync "$@";
+  if [[ "$1" == "-vp" || "$1" == "--view-pub" ]]; then
+    view_profile_pub_key "${@:2}";
   fi
 
   if [[ "$1" == "-e" || "$1" == "--edit" ]]; then
@@ -163,5 +178,9 @@ ssh-util() {
 
   if [[ "$1" == "-l" || "$1" == "--list" ]]; then
     list_ssh_profiles;
+  fi
+
+  if [[ "$1" == "-t" || "$1" == "--transfer" ]]; then
+    transfer_files_rsync "$@";
   fi
 }
