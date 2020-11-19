@@ -22,10 +22,8 @@ overwrite_ssh_profile_check() {
 
   # Check if the directory exists.
   if [ -d "$directory" ]; then
-
     # Prompt the user and ask if they want to overwrite it.
     while true; do
-
       # Ask the user about overwriting the existing profile.
       read -p "$question" answer;
       asked="true";
@@ -42,7 +40,6 @@ overwrite_ssh_profile_check() {
         rm -r "$directory";
         break;
       fi
-
     done
   else
     echo -e "false";
@@ -94,7 +91,7 @@ generate_ssh_profile() {
     echo -e "include $directory/host.config" >> "$SSHUTIL_DIR/hosts";
   fi
 
-  generate_ssh_key $profile $comment
+  generate_ssh_key "$profile" "$comment";
 }
 
 generate_ssh_key() {
