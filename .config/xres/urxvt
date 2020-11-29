@@ -3,7 +3,7 @@
 ! Set the fonts and their sizes
 #define  FontSize  12
 
-URxvt.font:         	xft:Consolas:size=FontSize,xft:Font Awesome 5 Free Solid:size=FontSize,xft:Font Awesome 5 Free Brands Regular:size=FontSize,xft:Font Awesome 5 Free Regular:size=FontSize
+URxvt.font:         	xft:Consolas:size=FontSize,xft:UbuntuMono Nerd Font Mono:size=14,xft:Symbola:size=10
 URxvt.boldFont:     	xft:Consolas Bold:size=FontSize
 URxvt.italicFont:   	xft:Consolas Italic:size=FontSize
 
@@ -15,7 +15,7 @@ URxvt.scrollBar:         false
 ! Padding
 URxvt.internalBorder:    20
 
-! Transparency (Native -- utilizing nitrogen)
+! Transparency (Native)
 URxvt.transparent:       true
 URxvt.shading:           40
 
@@ -27,6 +27,8 @@ URxvt.cursorBlink: true
 URxvt.keysym.Shift-Control-V: eval:paste_clipboard
 URxvt.keysym.Shift-Control-C: eval:selection_to_clipboard
 
-! Disable the old copy and paste keybinds
+! Disable the old copy and paste keybinds & ISO mode
 URxvt.keysym.Control-Meta-c: builtin-string:
 URxvt.keysym.Control-Meta-v: builtin-string:
+URxvt.iso14755: false
+URxvt.iso14755_52: false
