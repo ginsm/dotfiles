@@ -5,11 +5,12 @@
 # Set the desired location with $SSHUTIL_DIR.
 
 # Commands:
-# ssh-util (-g|--generate) <profile> <user> <ip> <port> [comment]    # Generates a SSH profile
-# ssh-util (-p|--pubkey) <profile>                                   # Outputs profile's id_rsa.pub
-# ssh-util (-e|--edit) <profile>                                     # Edit a SSH profile
-# ssh-util (-l|--list)                                               # List SSH profiles
-# ssh-util (-t|--transfer) <profile> <location> <files>              # Transfer files to remote server via SSH (rsync)
+# sshu (-g|--generate) <profile> <user> <ip> <port> [comment]    # Generates a SSH profile
+# sshu (-p|--pubkey) <profile>                                   # Outputs profile's id_rsa.pub
+# sshu (-e|--edit) <profile>                                     # Edit a SSH profile
+# sshu (-l|--list)                                               # List SSH profiles
+# sshu (-t|--transfer) <profile> <location> <files>              # Transfer files to remote server via SSH (rsync)
+# sshu (-c|--connect) <profile>                                  # Connect to a SSH profile
 
 # ------------------------------------------------------- #
 #                   Utility Functions                     #
@@ -65,7 +66,7 @@ __su_overwrite_ssh_profile_check() {
 __su_generate_ssh_profile() {
   # Alert the user that they will be prompted.
   if (( 5 > $# )); then
-    echo -e "Usage: ssh-util -g <profile> <user> <ip> <port> [comment]";
+    echo -e "Usage: sshu -g <profile> <user> <ip> <port> [comment]";
     echo -e "Please fill out the following information:";
   fi
 
@@ -74,7 +75,8 @@ __su_generate_ssh_profile() {
   local user=${2:-"$(prompt_user 'User: ' true)"};
   local ip=${3:-"$(prompt_user 'IP: ' true)"};
   local port=${4:-"$(prompt_user 'Port (optional): ')"};
-  local comment=${5:-"$(prompt_user 'Comment (optional): ')"};
+  local knock_sequence=${5:-"$(prompt_user 'Knock Sequence (optional): ')"};
+  local comment=${6:-"$(prompt_user 'Comment (optional): ')"};
 
   # Location of the profile and whether it exists.
   local directory="$SSHUTIL_DIR/profiles/$profile";
@@ -102,6 +104,11 @@ __su_generate_ssh_profile() {
     echo -e "  IdentityFile $directory/keys/id_rsa";
   } >> "$directory/host.config";
 
+  # Save the knock sequence to a file
+  if [ -n "$knock_sequence" ]; then
+    echo -e "$ip $knock_sequence" >> $directory/knock_sequence;
+  fi
+  
   # Add the profile to the main config.
   if [ "$overwrite_status" == "false" ]; then
     echo -e "include $directory/host.config" >> "$SSHUTIL_DIR/hosts";
@@ -133,7 +140,7 @@ __su_edit_ssh_profile() {
   if [ "$(__su_profile_exists $SSHUTIL_DIR/profiles/$profile)" == "true" ]; then
     vim "$SSHUTIL_DIR/profiles/$profile/host.config";
   else
-    echo -e "ssh-util: That profile does not exist.";
+    echo -e "sshu: That profile does not exist.";
   fi
 }
 
@@ -159,7 +166,7 @@ __su_view_profile_pub_key() {
     echo -e "$(cat $SSHUTIL_DIR/profiles/$profile/keys/id_rsa.pub)";
     echo -e "-------------------------------------------------------";
   else
-    echo -e "ssh-util: That profile does not exist.";
+    echo -e "sshu: That profile does not exist.";
   fi
 }
 
@@ -175,13 +182,32 @@ __su_transfer_files_rsync() {
   if [ "$(__su_profile_exists $SSHUTIL_DIR/profiles/$profile)" == "true" ]; then
     if (( 3 > $# )); then
       echo -e "Not enough arguments.";
-      echo -e "Usage: ssh-util -t <profile> <location> <...files>";
+      echo -e "Usage: sshu -t <profile> <location> <...files>";
       return 0;
     fi
     
     rsync -hrvz --progress ${@:3} $profile:$location;
   else
-    echo -e "ssh-util: That profile does not exist.";
+    echo -e "sshu: That profile does not exist.";
+  fi
+}
+
+
+# ------------------------------------------------------- #
+#                   Connecting via SSH                    #
+# ------------------------------------------------------- #
+__su_connect_ssh() {
+  local profile="$1"
+  local directory="$SSHUTIL_DIR/profiles/$profile";
+
+  if [[ -d "$directory" ]]; then
+    # Knock the appropriate ports
+    if [ -f "$directory/knock_sequence" ]; then
+      knock -d 300 $(cat $directory/knock_sequence)
+    fi
+    
+    # Connect via the SSH profile
+    ssh $profile
   fi
 }
 
@@ -191,10 +217,11 @@ __su_transfer_files_rsync() {
 # ------------------------------------------------------- #
 
 __su_help_menu() {
-  echo -e "Usage: ssh-util [OPTIONS] \n";
+  echo -e "Usage: sshu [OPTIONS] \n";
   echo -e "Options:";
   echo -e "  -l                                             List available profiles";
   echo -e "  -g <profile> <user> <ip> <port> [comment]      Generate SSH profile";
+  echo -e "  -c <profile>                                   Connect to SSH profile";
   echo -e "  -e <profile>                                   Edit SSH profile";
   echo -e "  -p <profile>                                   View SSH profile's id_rsa.pub";
   echo -e "  -t <profile> <location> <files>                Transfer files to SSH profile";
@@ -218,7 +245,7 @@ __su_command_flag() {
   done
 }
 
-ssh-util() {
+sshu() {
   __su_command_ran="false";
 
   __su_command_flag "-g --generate" generate_ssh_profile "$@";
@@ -226,6 +253,7 @@ ssh-util() {
   __su_command_flag "-e --edit" edit_ssh_profile "$@";
   __su_command_flag "-l --list" list_ssh_profiles "$@";
   __su_command_flag "-t --transfer" transfer_files_rsync "$@";
+  __su_command_flag "-c --connect" connect_ssh "$@";
 
   if [[ "$__su_command_ran" == "false" ]]; then
     __su_help_menu;
