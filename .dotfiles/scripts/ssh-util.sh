@@ -4,14 +4,6 @@
 # profiles, and transferring to remote servers via rsync.
 # Set the desired location with $SSHUTIL_DIR.
 
-# Commands:
-# sshu (-g|--generate) <profile> <user> <ip> <port> [comment]    # Generates a SSH profile
-# sshu (-p|--pubkey) <profile>                                   # Outputs profile's id_rsa.pub
-# sshu (-e|--edit) <profile>                                     # Edit a SSH profile
-# sshu (-l|--list)                                               # List SSH profiles
-# sshu (-t|--transfer) <profile> <location> <files>              # Transfer files to remote server via SSH (rsync)
-# sshu (-c|--connect) <profile>                                  # Connect to a SSH profile
-
 # ------------------------------------------------------- #
 #                   Utility Functions                     #
 # ------------------------------------------------------- #
@@ -24,7 +16,6 @@ __su_profile_exists() {
     echo "false";
   fi
 }
-
 
 
 # ------------------------------------------------------- #
@@ -219,12 +210,12 @@ __su_connect_ssh() {
 __su_help_menu() {
   echo -e "Usage: sshu [OPTIONS] \n";
   echo -e "Options:";
-  echo -e "  -l                                             List available profiles";
-  echo -e "  -g <profile> <user> <ip> <port> [comment]      Generate SSH profile";
-  echo -e "  -c <profile>                                   Connect to SSH profile";
-  echo -e "  -e <profile>                                   Edit SSH profile";
-  echo -e "  -p <profile>                                   View SSH profile's id_rsa.pub";
-  echo -e "  -t <profile> <location> <files>                Transfer files to SSH profile";
+  echo -e "  -l                                                     List available profiles";
+  echo -e "  -g <profile> <user> <ip> <port> [knock] [comment]      Generate SSH profile";
+  echo -e "  -c <profile>                                           Connect to SSH profile";
+  echo -e "  -e <profile>                                           Edit SSH profile";
+  echo -e "  -p <profile>                                           View SSH profile's id_rsa.pub";
+  echo -e "  -t <profile> <location> <files>                        Transfer files to SSH profile";
 }
 
 
