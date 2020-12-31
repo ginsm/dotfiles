@@ -144,7 +144,7 @@ __su_generate_ssh_key() {
 # ------------------------------------------------------- #
 
 __su_edit_ssh_profile() {
-  local profile="$1";
+  local profile=${1:-"$(prompt_user 'Profile: ' true)"};
   local directory="$SSHUTIL_DIR/profiles/$profile";
 
   if [[ -d "$directory" ]]; then
@@ -169,7 +169,7 @@ __su_list_ssh_profiles() {
 # ------------------------------------------------------- #
 
 __su_view_profile_pub_key() {
-  local profile="$1";
+  local profile=${1:-"$(prompt_user 'Profile: ' true)"};
   local directory="$SSHUTIL_DIR/profiles/$profile";
 
   if [[ -d "$directory" ]]; then
@@ -188,22 +188,22 @@ __su_view_profile_pub_key() {
 # ------------------------------------------------------- #
 
 __su_transfer_files_rsync() {
-  local profile="$1";
-  local location="$2";
+  local profile=${1:-"$(prompt_user 'Profile: ' true)"};
+  local location=${2:-"$(prompt_user 'Target Location: ' true)"};
+  local files="${@:3}";
   local directory="$SSHUTIL_DIR/profiles/$profile";
 
-  if [[ -d "$directory" ]]; then
-    if (( 3 > $# )); then
-      echo -e "Not enough arguments.";
-      echo -e "Usage: sshu -t <profile> <location> <...files>";
-      return 0;
-    fi
+  # Ensure that a file list was provided
+  if [ -z "$files" ]; then
+    files="$(prompt_user 'Files: ' true)";
+  fi  
 
+  if [[ -d "$directory" ]]; then
     # Issue the appropriate knock sequence if it exists
     __su_knock_profile $profile;
 
     # Begin syncing the files
-    rsync -hrvz --progress "${@:3}" $profile:$location;
+    rsync -hrvz --progress "$files" $profile:$location;
   else
     echo -e "sshu: That profile does not exist.";
   fi
@@ -214,7 +214,7 @@ __su_transfer_files_rsync() {
 #                   Connecting via SSH                    #
 # ------------------------------------------------------- #
 __su_connect_ssh() {
-  local profile="$1"
+  local profile=${1:-"$(prompt_user 'Profile: ' true)"};
   local directory="$SSHUTIL_DIR/profiles/$profile";
 
   if [[ -d "$directory" ]]; then
