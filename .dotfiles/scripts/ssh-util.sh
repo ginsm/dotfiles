@@ -122,7 +122,7 @@ __su_generate_ssh_profile() {
   __su_generate_ssh_key "$profile" "$comment";
 
   # Output the pub key
-  __su_view_profile_pub_key $profile
+  __su_view_profile_pub_key $profile;
 }
 
 __su_generate_ssh_key() {
@@ -145,7 +145,7 @@ __su_generate_ssh_key() {
 
 __su_edit_ssh_profile() {
   local profile="$1";
-  local directory="$SSHUTIL_DIR/profiles/$profile"
+  local directory="$SSHUTIL_DIR/profiles/$profile";
 
   if [[ -d "$directory" ]]; then
     vim "$directory/host.config";
@@ -170,7 +170,7 @@ __su_list_ssh_profiles() {
 
 __su_view_profile_pub_key() {
   local profile="$1";
-  local directory="$SSHUTIL_DIR/profiles/$profile"
+  local directory="$SSHUTIL_DIR/profiles/$profile";
 
   if [[ -d "$directory" ]]; then
     echo -e "\"${profile}\" id_rsa.pub";
@@ -190,7 +190,7 @@ __su_view_profile_pub_key() {
 __su_transfer_files_rsync() {
   local profile="$1";
   local location="$2";
-  local directory="$SSHUTIL_DIR/profiles/$profile"
+  local directory="$SSHUTIL_DIR/profiles/$profile";
 
   if [[ -d "$directory" ]]; then
     if (( 3 > $# )); then
@@ -200,7 +200,7 @@ __su_transfer_files_rsync() {
     fi
 
     # Issue the appropriate knock sequence if it exists
-    __su_knock_profile $profile
+    __su_knock_profile $profile;
 
     # Begin syncing the files
     rsync -hrvz --progress "${@:3}" $profile:$location;
@@ -219,10 +219,10 @@ __su_connect_ssh() {
 
   if [[ -d "$directory" ]]; then
     # Knock the appropriate ports
-    __su_knock_profile $profile
+    __su_knock_profile $profile;
     
     # Connect via the SSH profile
-    ssh $profile
+    ssh $profile;
   fi
 }
 
@@ -234,12 +234,12 @@ __su_connect_ssh() {
 __su_help_menu() {
   echo -e "Usage: sshu [OPTIONS] \n";
   echo -e "Options:";
-  echo -e "  -l                                                     List available profiles";
-  echo -e "  -g <profile> <user> <ip> <port> [knock] [comment]      Generate SSH profile";
-  echo -e "  -c <profile>                                           Connect to SSH profile";
-  echo -e "  -e <profile>                                           Edit SSH profile";
-  echo -e "  -p <profile>                                           View SSH profile's id_rsa.pub";
-  echo -e "  -t <profile> <location> <files>                        Transfer files to SSH profile";
+  echo -e "  -l                                                        List available profiles";
+  echo -e "  -g <profile> <user> <ip> <port> [knockseq] [comment]      Generate SSH profile";
+  echo -e "  -c <profile>                                              Connect to SSH profile";
+  echo -e "  -e <profile>                                              Edit SSH profile";
+  echo -e "  -p <profile>                                              View SSH profile's id_rsa.pub";
+  echo -e "  -t <profile> <location> <files>                           Transfer files to SSH profile";
 }
 
 
