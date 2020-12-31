@@ -1,0 +1,10 @@
+These dotfiles utilize the following packages:
+
+herbstluftwm
+polybar
+dunst
+libnotify
+urxvt
+nitrogen
+libinput-gestures
+knockd
