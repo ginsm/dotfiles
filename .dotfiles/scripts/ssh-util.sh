@@ -8,13 +8,27 @@
 #                   Utility Functions                     #
 # ------------------------------------------------------- #
 
-__su_profile_exists() {
-  local directory="$1";
-  if [[ -d "$directory" ]]; then
-    echo "true";
-  else
-    echo "false";
+__su_knock_profile() {
+  local profile="$1"
+  local directory="$SSHUTIL_DIR/profiles/$profile"
+
+  # Check if a knock sequence is available and issue it
+  if [ -f "$directory/knock_sequence" ]; then
+    knock -d 300 $(cat $directory/knock_sequence);
   fi
+}
+
+__su_command_flag() {
+  local flags="$1";
+  local command="$2";
+  local issued_flag="$3";
+
+  for flag in $flags; do
+    if [[ "$flag" == "$issued_flag" ]]; then
+      __su_command_ran="true";
+      "__su_$command" "${@:4}";
+    fi
+  done
 }
 
 
@@ -57,8 +71,8 @@ __su_overwrite_ssh_profile_check() {
 __su_generate_ssh_profile() {
   # Alert the user that they will be prompted.
   if (( 5 > $# )); then
-    echo -e "Usage: sshu -g <profile> <user> <ip> <port> [comment]";
-    echo -e "Please fill out the following information:";
+    echo -e "Usage: sshu -g <profile> <user> <ip> <port> [knock] [comment]";
+    echo -e "Please fill out the following information.";
   fi
 
   # Handle user input (passed arguments and prompts).
@@ -106,6 +120,9 @@ __su_generate_ssh_profile() {
   fi
 
   __su_generate_ssh_key "$profile" "$comment";
+
+  # Output the pub key
+  __su_view_profile_pub_key $profile
 }
 
 __su_generate_ssh_key() {
@@ -114,11 +131,11 @@ __su_generate_ssh_key() {
   local comment="$2";
 
   # Make the keys directory.
-  local location="$SSHUTIL_DIR/profiles/$profile/keys";
-  mkdir -p "$location";
+  local directory="$SSHUTIL_DIR/profiles/$profile/keys";
+  mkdir -p "$directory";
 
   # Generate the key in the respective folder.
-  ssh-keygen -t rsa -b 4096 -C "$comment" -f "$location/id_rsa";
+  ssh-keygen -t rsa -b 4096 -C "$comment" -f "$directory/id_rsa";
 }
 
 
@@ -128,8 +145,10 @@ __su_generate_ssh_key() {
 
 __su_edit_ssh_profile() {
   local profile="$1";
-  if [ "$(__su_profile_exists $SSHUTIL_DIR/profiles/$profile)" == "true" ]; then
-    vim "$SSHUTIL_DIR/profiles/$profile/host.config";
+  local directory="$SSHUTIL_DIR/profiles/$profile"
+
+  if [[ -d "$directory" ]]; then
+    vim "$directory/host.config";
   else
     echo -e "sshu: That profile does not exist.";
   fi
@@ -151,7 +170,9 @@ __su_list_ssh_profiles() {
 
 __su_view_profile_pub_key() {
   local profile="$1";
-  if [ "$(__su_profile_exists $SSHUTIL_DIR/profiles/$profile)" == "true" ]; then
+  local directory="$SSHUTIL_DIR/profiles/$profile"
+
+  if [[ -d "$directory" ]]; then
     echo -e "\"${profile}\" id_rsa.pub";
     echo -e "-------------------------------------------------------";
     echo -e "$(cat $SSHUTIL_DIR/profiles/$profile/keys/id_rsa.pub)";
@@ -169,15 +190,20 @@ __su_view_profile_pub_key() {
 __su_transfer_files_rsync() {
   local profile="$1";
   local location="$2";
+  local directory="$SSHUTIL_DIR/profiles/$profile"
 
-  if [ "$(__su_profile_exists $SSHUTIL_DIR/profiles/$profile)" == "true" ]; then
+  if [[ -d "$directory" ]]; then
     if (( 3 > $# )); then
       echo -e "Not enough arguments.";
       echo -e "Usage: sshu -t <profile> <location> <...files>";
       return 0;
     fi
-    
-    rsync -hrvz --progress ${@:3} $profile:$location;
+
+    # Issue the appropriate knock sequence if it exists
+    __su_knock_profile $profile
+
+    # Begin syncing the files
+    rsync -hrvz --progress "${@:3}" $profile:$location;
   else
     echo -e "sshu: That profile does not exist.";
   fi
@@ -193,9 +219,7 @@ __su_connect_ssh() {
 
   if [[ -d "$directory" ]]; then
     # Knock the appropriate ports
-    if [ -f "$directory/knock_sequence" ]; then
-      knock -d 300 $(cat $directory/knock_sequence)
-    fi
+    __su_knock_profile $profile
     
     # Connect via the SSH profile
     ssh $profile
@@ -223,19 +247,6 @@ __su_help_menu() {
 #                 Delegated Flag Handling                 #
 # ------------------------------------------------------- #
 
-__su_command_flag() {
-  local flags="$1";
-  local command="$2";
-  local issued_flag="$3";
-
-  for flag in $flags; do
-    if [[ "$flag" == "$issued_flag" ]]; then
-      __su_command_ran="true";
-      "__su_$command" "${@:4}";
-    fi
-  done
-}
-
 sshu() {
   __su_command_ran="false";
 
@@ -245,6 +256,7 @@ sshu() {
   __su_command_flag "-l --list" list_ssh_profiles "$@";
   __su_command_flag "-t --transfer" transfer_files_rsync "$@";
   __su_command_flag "-c --connect" connect_ssh "$@";
+  __su_command_flag "-h --help" __su_help_menu;
 
   if [[ "$__su_command_ran" == "false" ]]; then
     __su_help_menu;
