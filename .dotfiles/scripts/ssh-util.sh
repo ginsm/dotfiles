@@ -144,6 +144,12 @@ __su_generate_ssh_key() {
 # ------------------------------------------------------- #
 
 __su_edit_ssh_profile() {
+  # Alert the user that they will be prompted.
+  if (( 1 > $# )); then
+    echo -e "Usage: sshu -e <profile>";
+    echo -e "Please fill out the following information.";
+  fi
+
   local profile=${1:-"$(prompt_user 'Profile: ' true)"};
   local directory="$SSHUTIL_DIR/profiles/$profile";
 
@@ -169,6 +175,12 @@ __su_list_ssh_profiles() {
 # ------------------------------------------------------- #
 
 __su_view_profile_pub_key() {
+  # Alert the user that they will be prompted.
+  if (( 1 > $# )); then
+    echo -e "Usage: sshu -p <profile>";
+    echo -e "Please fill out the following information.";
+  fi
+
   local profile=${1:-"$(prompt_user 'Profile: ' true)"};
   local directory="$SSHUTIL_DIR/profiles/$profile";
 
@@ -188,6 +200,11 @@ __su_view_profile_pub_key() {
 # ------------------------------------------------------- #
 
 __su_transfer_files_rsync() {
+  # Alert the user that they will be prompted.
+  if (( 2 > $# )); then
+    echo -e "Usage: sshu -t <profile> <location> <files>";
+    echo -e "Please fill out the following information.";
+  fi
   local profile=${1:-"$(prompt_user 'Profile: ' true)"};
   local location=${2:-"$(prompt_user 'Target Location: ' true)"};
   local files="${@:3}";
@@ -214,6 +231,11 @@ __su_transfer_files_rsync() {
 #                   Connecting via SSH                    #
 # ------------------------------------------------------- #
 __su_connect_ssh() {
+  # Alert the user that they will be prompted.
+  if (( 1 > $# )); then
+    echo -e "Usage: sshu -c <profile>";
+    echo -e "Please fill out the following information.";
+  fi
   local profile=${1:-"$(prompt_user 'Profile: ' true)"};
   local directory="$SSHUTIL_DIR/profiles/$profile";
 
