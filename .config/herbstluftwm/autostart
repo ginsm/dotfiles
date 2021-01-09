@@ -86,6 +86,12 @@ hc keybind XF86AudioMute        spawn amixer set Master toggle
 hc keybind XF86AudioRaiseVolume spawn amixer set Master 1%+
 hc keybind XF86AudioLowerVolume spawn amixer set Master 1%-
 
+# Screenshot Keys
+mkdir -p $HOME/Pictures/Screenshots
+hc keybind Print spawn scrot 'Pictures/Screenshots/%m-%d-%Y-%H%M%S.png' --select --exec 'notify-send --expire-time=2000 "Area Screenshot Saved."'
+hc keybind $Mod-Print spawn scrot 'Pictures/Screenshots/%m-%d-%Y-%H%M%S.png' --exec 'notify-send --expire-time=2000 "Fullscreen Screenshot Saved."'
+hc keybind $Mod-Ctrl-Print spawn scrot 'Pictures/Screenshots/%m-%d-%Y-%H%M%S.png' --focused --exec 'notify-send --expire-time=2000 "Window screenshot Saved."'
+
 # Backlight Keys
 hc keybind XF86MonBrightnessUp   spawn xbacklight +10
 hc keybind XF86MonBrightnessDown spawn xbacklight -10
