@@ -202,28 +202,25 @@ __su_view_profile_pub_key() {
 __su_transfer_files_rsync() {
   # Alert the user that they will be prompted.
   if (( 2 > $# )); then
-    echo -e "Usage: sshu -t <profile> <location> <files>";
-    echo -e "Please fill out the following information.";
+    echo -e "Usage: sshu -t <source|target> <target|source>";
   fi
-  local profile=${1:-"$(prompt_user 'Profile: ' true)"};
-  local location=${2:-"$(prompt_user 'Target Location: ' true)"};
-  local files="${@:3}";
-  local directory="$SSHUTIL_DIR/profiles/$profile";
+  
+  local arg1=${1:-"$(prompt_user 'Source|target: ' true)"};
+  local arg2=${2:-"$(prompt_user 'Target|source: ' true)"};
 
-  # Ensure that a file list was provided
-  if [ -z "$files" ]; then
-    files="$(prompt_user 'Files: ' true)";
-  fi  
+  for arg in $arg1 $arg2; do
+    if [[ $arg == *":"* ]]; then
+      local profile="$(cut -d ':' -f 1 <<< $arg)";
+      local directory="$SSHUTIL_DIR/profiles/$profile";
+    fi
+  done
 
+  # Issue the appropriate knock sequence if it exists
   if [[ -d "$directory" ]]; then
-    # Issue the appropriate knock sequence if it exists
     __su_knock_profile $profile;
-
-    # Begin syncing the files
-    rsync -hrvz --progress "$files" $profile:$location;
-  else
-    echo -e "sshu: That profile does not exist.";
   fi
+
+  rsync -hrvze ssh --progress "$arg1" "$arg2";
 }
 
 
@@ -236,6 +233,7 @@ __su_connect_ssh() {
     echo -e "Usage: sshu -c <profile>";
     echo -e "Please fill out the following information.";
   fi
+
   local profile=${1:-"$(prompt_user 'Profile: ' true)"};
   local directory="$SSHUTIL_DIR/profiles/$profile";
 
@@ -256,12 +254,12 @@ __su_connect_ssh() {
 __su_help_menu() {
   echo -e "Usage: sshu [OPTIONS] \n";
   echo -e "Options:";
-  echo -e "  -l                                                        List available profiles";
-  echo -e "  -g <profile> <user> <ip> <port> [knockseq] [comment]      Generate SSH profile";
-  echo -e "  -c <profile>                                              Connect to SSH profile";
-  echo -e "  -e <profile>                                              Edit SSH profile";
-  echo -e "  -p <profile>                                              View SSH profile's id_rsa.pub";
-  echo -e "  -t <profile> <location> <files>                           Transfer files to SSH profile";
+  echo -e "  -l                                                      List available profiles";
+  echo -e "  -g <profile> <user> <ip> <port> [knockseq] [comment]    Generate a SSH profile";
+  echo -e "  -c <profile>                                            Connect to a SSH profile";
+  echo -e "  -e <profile>                                            Edit a profile";
+  echo -e "  -p <profile>                                            View a profile's id_rsa.pub";
+  echo -e "  -t <target|source> <target|source>                      Transfer files bidirectionally";
 }
 
 
