@@ -88,6 +88,7 @@ hc keybind XF86AudioLowerVolume spawn amixer set Master 1%-
 
 # Screenshot Keys
 mkdir -p $HOME/Pictures/Screenshots
+
 hc keybind Print spawn scrot 'Pictures/Screenshots/%m-%d-%Y-%H%M%S.png' --select --exec 'notify-send --expire-time=2000 "Area Screenshot Saved."'
 hc keybind $Mod-Print spawn scrot 'Pictures/Screenshots/%m-%d-%Y-%H%M%S.png' --exec 'notify-send --expire-time=2000 "Fullscreen Screenshot Saved."'
 hc keybind $Mod-Ctrl-Print spawn scrot 'Pictures/Screenshots/%m-%d-%Y-%H%M%S.png' --focused --exec 'notify-send --expire-time=2000 "Window screenshot Saved."'
@@ -114,11 +115,14 @@ hc keybind $Mod-space                                                           
                      . cycle_layout +1 vertical horizontal max vertical grid    \
                , cycle_layout +1
 
-# mouse
+# Mouse
 hc mouseunbind --all
 hc mousebind $Mod-Button1 move
 hc mousebind $Mod-Button2 zoom
 hc mousebind $Mod-Button3 resize
+# (Browser Navigation)
+hc mousebind Button8 xdotool alt+Left
+hc mousebind Button9 xdotool alt+Right
 
 # focus
 hc keybind $Mod-BackSpace   cycle_monitor
@@ -184,14 +188,12 @@ hc unlock
 # hc detect_monitors
 
 # Try to load the local panel script; falls back to the default one
-panel=~/.config/herbstluftwm/panel.sh
+panel=$HOME/.config/herbstluftwm/panel.sh
 [ -x "$panel" ] || panel=/etc/xdg/herbstluftwm/panel.sh
 for monitor in $(hc list_monitors | cut -d: -f1) ; do
     # start it on each monitor
     "$panel" "$monitor" &
 done
 
-nitrogen --restore &
-
-# Autostart dunst
-pgrep dunst || dunst &
+# Initiate post-load script
+. $HOME/.config/herbstluftwm/postload
