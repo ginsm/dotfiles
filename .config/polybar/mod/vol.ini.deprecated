@@ -1,3 +1,5 @@
+# deprecated (see pulseaudio-control module)
+
 [module/alsa]
 type = internal/alsa
 

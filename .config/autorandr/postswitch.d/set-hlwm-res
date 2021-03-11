@@ -9,4 +9,5 @@ case "$AUTORANDR_CURRENT_PROFILE" in
   ;;
 esac
 
-nitrogen --restore &
+# Reset background
+~/.fehbg &
