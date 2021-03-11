@@ -5,7 +5,7 @@ polybar
 dunst
 libnotify
 urxvt
-nitrogen
+feh
 libinput-gestures
 knockd
 nm-applet
@@ -14,3 +14,5 @@ autorandr
 optimus-manager
 alsamixer
 xmousepasteblock
+pulseaudio
+pulseaudio-control
