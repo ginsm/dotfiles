@@ -83,6 +83,9 @@ __su_generate_ssh_profile() {
   local knock_sequence=${5:-"$(prompt_user 'Knock Sequence (optional): ')"};
   local comment=${6:-"$(prompt_user 'Comment (optional): ')"};
 
+  # Generate the SSH config file (.ssh/config).
+  __su_generate_ssh_config
+
   # Location of the profile and whether it exists.
   local directory="$SSHUTIL_DIR/profiles/$profile";
   local overwrite_status="$(__su_overwrite_ssh_profile_check $directory)";
@@ -136,6 +139,13 @@ __su_generate_ssh_key() {
 
   # Generate the key in the respective folder.
   ssh-keygen -t rsa -b 4096 -C "$comment" -f "$directory/id_rsa";
+}
+
+__su_generate_ssh_config() {
+  local directory="$HOME/.ssh";
+  if [ ! -f "$directory/config" ]; then
+    echo -e "include \"$SSHUTIL_DIR/hosts\"" >> $directory/config;
+  fi
 }
 
 
