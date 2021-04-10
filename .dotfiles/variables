@@ -6,7 +6,7 @@ export ALIASES="$HOME/.dotfiles/aliases";
 # Used for the sandbox script (see $HOME/.dotfiles/scripts/sandbox)
 export SANDBOX="$HOME/Dropbox/Development/Sandbox";
 
-# Used for the connect script (see $HOME/.dotfiles/scripts/connect)
+# Used for the connect script (see $HOME/.dotfiles/scripts/ssh-util)
 export SSHUTIL_DIR="/run/media/$USER/keys";
 
 # Node Version Manager's directory
