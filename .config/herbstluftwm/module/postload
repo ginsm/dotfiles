@@ -29,7 +29,7 @@ nm-applet
 xmousepasteblock
 
 # Restore background
-. $HOME/.fehbg
+~/.fehbg &
 
 # Set amixer pre-amp to 40%
-amixer set "Pre-Amp" '40%
+amixer set "Pre-Amp" 40%
