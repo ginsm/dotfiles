@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# ... I'm going to do it anyway.
+cd() {
+  builtin cd "$@" && ls -F
+}
+
 # ls aliases and the like
 alias ls='ls --color=auto'
 alias ll='ls -alF'
