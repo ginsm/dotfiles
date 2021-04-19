@@ -2,7 +2,7 @@
 
 # ... I'm going to do it anyway.
 cd() {
-  builtin cd "$@" && ls -F
+  builtin cd "$@" && ls --color=auto
 }
 
 # ls aliases and the like
