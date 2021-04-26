@@ -5,3 +5,5 @@ addPath() {
 }
 
 addPath "/home/$USER/.local/bin";
+
+addPath "/home/$USER/.local/share/gem/ruby/3.0.0/bin"
