@@ -38,23 +38,9 @@ dmenu_selector() {
 
 
 toggle_power() {
-  if [ -f "$module_path/power.state" ]; then
-    power_state="$(cat $module_path/power.state)"
-
-    if [ "$power_state" == "on" ]; then
-      new_state="off"
-    else
-      new_state="on"
-    fi
-
-    echo "power $new_state" | bluetoothctl
-    echo "$new_state" > "$module_path/power.state"
-  else
-    echo "power on" | bluetoothctl
-    echo "on" > "$module_path/power.state"
-  fi
-
-  echo get_power_state
+  powered="$(echo "show" | bluetoothctl | grep -i powered | cut -d' ' -f2)"
+  if [ "$powered" == "yes" ]; then new_state="off"; else new_state="on"; fi
+  echo "power $new_state" | bluetoothctl
 }
 
 
