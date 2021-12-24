@@ -93,12 +93,15 @@ hc keybind XF86AudioLowerVolume spawn amixer set Master 1%-
 # └───────────────────┘
 # Ensure the directory exists
 mkdir -p $HOME/Pictures/Screenshots
+
 # Area Selection
-hc keybind Print spawn scrot 'Pictures/Screenshots/%m-%d-%Y-%H%M%S.png' --select --exec 'notify-send --expire-time=2000 "Area Screenshot Saved."'
+hc keybind Print spawn scrot 'Pictures/Screenshots/%m-%d-%Y-%H%M%S.png' --select --exec 'notify-send --expire-time=2000 "Area Screenshot Saved." && xclip -selection clipboard -t image/png -i $f'
+
 # Fullscreen
-hc keybind Ctrl-Print spawn scrot 'Pictures/Screenshots/%m-%d-%Y-%H%M%S.png' --exec 'notify-send --expire-time=2000 "Fullscreen Screenshot Saved."'
+hc keybind Mod1-Print spawn scrot 'Pictures/Screenshots/%m-%d-%Y-%H%M%S.png' --exec 'notify-send --expire-time=2000 "Fullscreen Screenshot Saved." && xclip -selection clipboard -t image/png -i $f'
+
 # Focused Window
-hc keybind Mod1-Print spawn scrot 'Pictures/Screenshots/%m-%d-%Y-%H%M%S.png' --focused --exec 'notify-send --expire-time=2000 "Window Screenshot Saved."'
+hc keybind Ctrl-Print spawn scrot 'Pictures/Screenshots/%m-%d-%Y-%H%M%S.png' --focused --exec 'xclip -selection clipboard -t image/png -i $f && notify-send --expire-time=2000 "Window Screenshot Saved."'
 
 
 # ┌─────────────────┐
