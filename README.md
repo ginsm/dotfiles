@@ -1,17 +1,21 @@
 # dotfiles
 
-These are my personal dotfiles, configurations, and scripts. It is currently a work in progress.
+These are my personal dotfiles, configurations, and scripts. I utilize [baredot](https://baredot.github.io/https://baredot.github.io/) for my dotfile management strategy; if you'd like to use them I'd recommend reading into the strategy more (it's pretty straightforward).
 
-### Configurations
-- [HerbstluftWM](https://github.com/ginsm/dotfiles/tree/main/.config/herbstluftwm)
-- [Polybar](https://github.com/ginsm/dotfiles/tree/main/.config/polybar)
-- [Dunst](https://github.com/ginsm/dotfiles/tree/main/.config/dunst)
-- [libinput-gestures](https://github.com/ginsm/dotfiles/blob/main/.config/libinput-gestures.conf)
-- [rxvt](https://github.com/ginsm/dotfiles/tree/main/.config/xres)
+## Configurations
+- [HerbstluftWM](.config/herbstluftwm)
+- [Polybar](.config/polybar)
+- [Dunst](.config/dunst)
+- [libinput-gestures](.config/libinput-gestures.conf)
+- [rxvt](.config/xres)
 
-### Packages
+## Scripts
+- [addalias](.dotfiles/scripts/addalias.sh)
+- [sandbox](.dotfiles/scripts/sandbox.sh)
+- [layouts](.dotfiles/scripts/layouts.sh)
+- [ssh-util](.dotfiles/scripts/ssh-util.sh)
 
-These dotfiles utilize the following packages:
+## Packages
 
 ```
 herbstluftwm
@@ -30,4 +34,7 @@ alsamixer
 xmousepasteblock
 pulseaudio
 pulseaudio-control
+xclip
+cut
+grep
 ```
