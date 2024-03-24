@@ -1,10 +1,5 @@
 #!/bin/sh
 
-# Colormap
-function colormap() {
-  for i in {0..255}; do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}; done
-}
-
 # ... I'm going to do it anyway.
 function cd() {
   builtin cd "$@" && ls --color=auto
@@ -21,8 +16,8 @@ function mntusb() {
 function prompt_user() {
   local question=$1;
   local required=$2;
-  local answer;
   local asked="false";
+  local answer;
   
   if [ -n "$required" ]; then
     while [ -z "$answer" ]; do

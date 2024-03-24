@@ -1,5 +1,27 @@
 # dotfiles
 
-These are my personal dotfiles, configurations, and scripts.
+These are my personal dotfiles, configurations, and scripts. Feel free to use whatever you find useful here.
 
-Note: I'm currently in the process of updating this. I'm going to be swapping to zsh from bash, which was long overdue. But for now, I'm going to back up my current configurations.
+## Packages
+
+```
+herbstluftwm
+polybar
+dunst
+libnotify
+urxvt
+feh
+libinput-gestures
+knockd
+nm-applet
+xrandr
+autorandr
+optimus-manager
+alsamixer
+xmousepasteblock
+pulseaudio
+pulseaudio-control
+xclip
+cut
+grep
+```

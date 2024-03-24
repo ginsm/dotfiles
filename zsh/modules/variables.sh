@@ -16,17 +16,5 @@ export NVM_DIR="$HOME/.nvm";
 export VISUAL=vim;
 export EDITOR="$VISUAL";
 
-# Set starship config location
-export STARSHIP_CONFIG="$HOME/.dotfiles/config/starship.toml"
-
-# nvm location
-export NVM_DIR="$HOME/.nvm"
-
 # Java location
 export JAVA_HOME="$SDKMAN_DIR/candidates/java/current/bin"
-
-# Win OneDrive's github repo location
-export GIT="/mnt/f/OneDrive/Development/GitHub/Repositories"
-
-# Modpack Repo Dir
-export MODPACK_REPO_DIR="$HOME/modpacks/"
