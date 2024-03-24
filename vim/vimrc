@@ -1,0 +1,5 @@
+source $VIMRUNTIME/defaults.vim
+
+" Enable line numbers and configure color
+set number
+highlight LineNr ctermfg=DarkGrey
