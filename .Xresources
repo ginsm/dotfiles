@@ -1,5 +1,0 @@
-! Color Scheme
-#include "/home/syh/.config/xres/themes/colortheme"
-
-! Program Specific Configurations
-#include "/home/syh/.config/xres/urxvt"

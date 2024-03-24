@@ -10,7 +10,7 @@
 # Usage: sb <path/to/file.ext> <category number>
 
 # Create a file in the sandbox
-sandbox() {
+function sandbox() {
   # Set up script variables
   local path_="${1}"
   category_="${2}"
@@ -38,7 +38,7 @@ sandbox() {
 }
 
 # Prompts you to select between 5 different categories.
-category_selector() {
+function category_selector() {
   # Clarify instructions
   printf "Please select a category via its number:\n"
 
@@ -59,7 +59,7 @@ category_selector() {
 }
 
 # Splits the file path up until [dir][file][ext]
-parse_path() {
+function parse_path() {
   # Get the path, file, and extension values
   local file="${1##*/}"
   local ext="${file##*.}"

@@ -8,7 +8,7 @@
 #                   Utility Functions                     #
 # ------------------------------------------------------- #
 
-__su_knock_profile() {
+function __su_knock_profile() {
   local profile="$1"
   local directory="$SSHUTIL_DIR/profiles/$profile"
 
@@ -18,7 +18,7 @@ __su_knock_profile() {
   fi
 }
 
-__su_command_flag() {
+function __su_command_flag() {
   local flags="$1";
   local command="$2";
   local issued_flag="$3";
@@ -36,7 +36,7 @@ __su_command_flag() {
 #                SSH Profile Generation                   #
 # ------------------------------------------------------- #
 
-__su_overwrite_ssh_profile_check() {
+function __su_overwrite_ssh_profile_check() {
   local directory="$1";
   local question="That profile already exists. Do you wish to overwrite it (y/N)? ";
   local answer;
@@ -68,7 +68,7 @@ __su_overwrite_ssh_profile_check() {
   fi  
 }
 
-__su_generate_ssh_profile() {
+function __su_generate_ssh_profile() {
   # Alert the user that they will be prompted.
   if (( 5 > $# )); then
     echo -e "Usage: sshu -g <profile> <user> <ip> <port> [knock] [comment]";
@@ -128,7 +128,7 @@ __su_generate_ssh_profile() {
   __su_view_profile_pub_key $profile;
 }
 
-__su_generate_ssh_key() {
+function __su_generate_ssh_key() {
   # Passed via __su_generate_ssh_profile function.
   local profile="$1";
   local comment="$2";
@@ -138,10 +138,10 @@ __su_generate_ssh_key() {
   mkdir -p "$directory";
 
   # Generate the key in the respective folder.
-  ssh-keygen -t rsa -b 4096 -C "$comment" -f "$directory/id_rsa";
+  ssh-keygen -t ed25519 -C "$comment" -f "$directory/id_ed25519";
 }
 
-__su_generate_ssh_config() {
+function __su_generate_ssh_config() {
   local directory="$HOME/.ssh";
   if [ ! -f "$directory/config" ]; then
     echo -e "include \"$SSHUTIL_DIR/hosts\"" >> $directory/config;
@@ -153,7 +153,7 @@ __su_generate_ssh_config() {
 #                     Edit SSH Profile                    #
 # ------------------------------------------------------- #
 
-__su_edit_ssh_profile() {
+function __su_edit_ssh_profile() {
   # Alert the user that they will be prompted.
   if (( 1 > $# )); then
     echo -e "Usage: sshu -e <profile>";
@@ -175,7 +175,7 @@ __su_edit_ssh_profile() {
 #                    List SSH Profiles                    #
 # ------------------------------------------------------- #
 
-__su_list_ssh_profiles() {
+function __su_list_ssh_profiles() {
   echo -e "$(ls -A $SSHUTIL_DIR/profiles)";
 }
 
@@ -184,7 +184,7 @@ __su_list_ssh_profiles() {
 #                   View Profile Pub Key                  #
 # ------------------------------------------------------- #
 
-__su_view_profile_pub_key() {
+function __su_view_profile_pub_key() {
   # Alert the user that they will be prompted.
   if (( 1 > $# )); then
     echo -e "Usage: sshu -p <profile>";
@@ -195,9 +195,9 @@ __su_view_profile_pub_key() {
   local directory="$SSHUTIL_DIR/profiles/$profile";
 
   if [[ -d "$directory" ]]; then
-    echo -e "\"${profile}\" id_rsa.pub";
+    echo -e "\"${profile}\"s public key";
     echo -e "-------------------------------------------------------";
-    echo -e "$(cat $SSHUTIL_DIR/profiles/$profile/keys/id_rsa.pub)";
+    echo -e "$(cat $SSHUTIL_DIR/profiles/$profile/keys/*.pub)";
     echo -e "-------------------------------------------------------";
   else
     echo -e "sshu: That profile does not exist.";
@@ -209,7 +209,7 @@ __su_view_profile_pub_key() {
 #                   File Transfer (rsync)                 #
 # ------------------------------------------------------- #
 
-__su_transfer_files_rsync() {
+function __su_transfer_files_rsync() {
   # Alert the user that they will be prompted.
   if (( 2 > $# )); then
     echo -e "Usage: sshu -t <source|target> <target|source>";
@@ -237,7 +237,7 @@ __su_transfer_files_rsync() {
 # ------------------------------------------------------- #
 #                   Connecting via SSH                    #
 # ------------------------------------------------------- #
-__su_connect_ssh() {
+function __su_connect_ssh() {
   # Alert the user that they will be prompted.
   if (( 1 > $# )); then
     echo -e "Usage: sshu -c <profile>";
@@ -256,12 +256,33 @@ __su_connect_ssh() {
   fi
 }
 
+function __su_run_command() {
+  # Alert the user that they will be prompted.
+  if (( 1 > $# )); then
+    echo -e "Usage: sshu -r <profile> <command>";
+    echo -e "Please fill out the following information.";
+  fi
+
+  local profile=${1:-"$(prompt_user 'Profile: ' true)"};
+  local command=${2:-"$(prompt_user 'Command: ' true)"};
+
+  local directory="$SSHUTIL_DIR/profiles/$profile";
+
+  if [[ -d "$directory" ]]; then
+    # Knock the appropriate ports
+    __su_knock_profile $profile;
+    
+    # Connect via the SSH profile
+    ssh $profile $command;
+  fi
+}
+
 
 # ------------------------------------------------------- #
 #                     Print Help Menu                     #
 # ------------------------------------------------------- #
 
-__su_help_menu() {
+function __su_help_menu() {
   echo -e "Usage: sshu [OPTIONS] \n";
   echo -e "Options:";
   echo -e "  -l                                                      List available profiles";
@@ -270,6 +291,7 @@ __su_help_menu() {
   echo -e "  -e <profile>                                            Edit a profile";
   echo -e "  -p <profile>                                            View a profile's id_rsa.pub";
   echo -e "  -t <target|source> <target|source>                      Transfer files bidirectionally";
+  echo -e "  -r <profile> <command>                                  Transfer files bidirectionally";
 }
 
 
@@ -277,7 +299,7 @@ __su_help_menu() {
 #                 Delegated Flag Handling                 #
 # ------------------------------------------------------- #
 
-sshu() {
+function sshu() {
   __su_command_ran="false";
 
   __su_command_flag "-g --generate" generate_ssh_profile "$@";
@@ -287,6 +309,7 @@ sshu() {
   __su_command_flag "-t --transfer" transfer_files_rsync "$@";
   __su_command_flag "-c --connect" connect_ssh "$@";
   __su_command_flag "-h --help" __su_help_menu;
+  __su_command_flag "-r --run" run_command "$@";
 
   if [[ "$__su_command_ran" == "false" ]]; then
     __su_help_menu;
