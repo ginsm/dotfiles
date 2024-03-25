@@ -122,7 +122,9 @@ install_dotfiles() {
   local overwrite_all=false backup_all=false skip_all=false
 
   find -H "$DOTFILES" -maxdepth 2 -name 'links.prop' -not -path '*.git*' | while read linkfile; do
-    cat "$linkfile" | while read line; do
+    # Not-empty line check (-n) was added by ginsm. In my case, the inner loop was ending
+    # prematurely; before the line was even read.
+    cat "$linkfile" | while read line || [[ -n "$line" ]]; do
       local src dst dir
       src=$(eval echo "$line" | cut -d '=' -f 1)
       dst=$(eval echo "$line" | cut -d '=' -f 2)
