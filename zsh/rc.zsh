@@ -1,8 +1,14 @@
+# Ensure something exists before sourcing
 source_if_exists() {
   if test -r "$1"; then
     source "$1"
   fi  
 }
+
+# Oh My Zsh configuration
+export ZSH="$HOME/.oh-my-zsh"
+plugins=(git)
+source $ZSH/oh-my-zsh.sh
 
 # Source specific files
 source_if_exists $HOME/.env.sh
