@@ -23,7 +23,7 @@ function __su_command_flag() {
   local command="$2";
   local issued_flag="$3";
 
-  for flag in $flags; do
+  for flag in $=flags; do
     if [[ "$flag" == "$issued_flag" ]]; then
       __su_command_ran="true";
       "__su_$command" "${@:4}";
@@ -47,7 +47,7 @@ function __su_overwrite_ssh_profile_check() {
     # Prompt the user and ask if they want to overwrite it.
     while true; do
       # Ask the user about overwriting the existing profile.
-      read -p "$question" answer;
+      read "answer?$question";
       asked="true";
 
       # End script if they answer with 'n', 'no', or press enter.
@@ -244,7 +244,7 @@ function __su_connect_ssh() {
     echo -e "Please fill out the following information.";
   fi
 
-  local profile=${1:-"$(prompt_user 'Profile: ' true)"};
+  local profile=${1:-$(prompt_user 'Profile: ' true)};
   local directory="$SSHUTIL_DIR/profiles/$profile";
 
   if [[ -d "$directory" ]]; then
