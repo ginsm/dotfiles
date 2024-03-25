@@ -1,15 +1,34 @@
+source_if_exists() {
+  if test -r "$1"; then
+    source "$1"
+  fi  
+}
 
-export EDITOR="$(which vim)"
+# Source specific files
+source_if_exists $HOME/.env.sh
+
+# Source all modules
+if [ -d $DOTFILES/zsh/modules ]; then
+  for module in $DOTFILES/zsh/modules/*; do
+    source_if_exists $module
+  done
+fi
+
+# Source all scripts
+if [ -d $DOTFILES/zsh/scripts ]; then
+  for script in $DOTFILES/zsh/scripts/*; do
+    source_if_exists $script
+  done
+fi
+
+export VISUAL=vim
+export EDITOR=vim
 
 # ANCHOR - Starship
-# Prevent newline at top on clear and start
 precmd() {
-  if [ ! -z "$BUFFER" ]; then
-    precmd() {
-      precmd() {
-        echo
-      }
-    }
+  last_command=$(history | tail -1 | sed "s/^[ ]*[0-9]*[ ]*//")
+  if [ "$last_command" != "clear" ]; then
+    echo
   fi
 }
 
