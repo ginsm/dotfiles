@@ -5,13 +5,13 @@ source_if_exists() {
   fi  
 }
 
-# Oh My Zsh configuration
-export ZSH="$HOME/.oh-my-zsh"
-plugins=(git)
-source $ZSH/oh-my-zsh.sh
-
 # Source specific files
 source_if_exists $HOME/.env.sh
+
+# Oh My Zsh configuration; check out zsh_plugins for plugins
+source_if_exists "$DOTFILES/zsh/plugins.zsh"
+export ZSH="$HOME/.oh-my-zsh"
+source $ZSH/oh-my-zsh.sh
 
 # Source all modules
 if [ -d $DOTFILES/zsh/modules ]; then
