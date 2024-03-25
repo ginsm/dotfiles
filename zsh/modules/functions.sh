@@ -18,19 +18,19 @@ function prompt_user() {
   local required=$2;
   local asked="false";
   local answer;
-  
+
   if [ -n "$required" ]; then
     while [ -z "$answer" ]; do
-      if [ "$asked" == "false" ]; then
-        read -p "$question" answer;
+      if [[ "$asked" == "false" ]]; then
+        read "answer?$question";
         asked="true";
       else
         echo -e "You must provide an answer.";
-        read -p "$question" answer;
+        read "answer?$question";
       fi
     done
   else
-    read -p "$question" answer;
+    read "answer?$question";
   fi
 
   echo -e "$answer";
