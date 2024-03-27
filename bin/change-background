@@ -1,0 +1,47 @@
+#!/usr/bin/env python3.12
+import re, os, sys
+
+
+def change_background():
+    settings_path, backgrounds_path = [
+        os.environ.get('WSL_SETTINGS_FILE', ""),
+        os.environ.get('WSL_BACKGROUNDS_PATH', "")
+    ]
+
+    # Exit script if missing or invalid paths
+    if not os.path.exists(settings_path):
+        print(f"Error: WSL_SETTINGS_FILE doesn't exist: {settings_path}.")
+        return
+    
+    if not os.path.exists(backgrounds_path):
+        print(f"Error: WSL_BACKGROUNDS_PATH doesn't exist: {backgrounds_path}.")
+        return
+
+    # Exit script if argument wasn't provided
+    if not len(sys.argv) > 1:
+        print('Usage: change-background <image.gif>')
+        return
+
+    # Get the argument
+    new_background = sys.argv[1:][0]
+
+    # Check if new background path exists
+    if not os.path.exists(os.path.join(backgrounds_path, new_background)):
+        print(f"Error: {new_background} doesn't exist within {backgrounds_path}.")
+        return
+
+    # Update settings file and overwrite contents
+    with open(settings_path, 'r+') as fp:
+        settings = fp.read()
+
+        # Replace the image name in settings
+        new_content = re.sub(r'[\w_\-\(\)\.,]+\.gif', new_background, settings)
+
+        # WRite to the file
+        fp.seek(0)
+        fp.truncate()  # Truncate the file to remove existing content
+        fp.write(new_content)
+
+
+if __name__ == "__main__":
+    change_background()

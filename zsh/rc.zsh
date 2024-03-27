@@ -32,6 +32,8 @@ export EDITOR=vim
 
 # ANCHOR - Starship
 precmd() {
+  source $DOTFILES/zsh/modules/aliases.sh
+
   last_command=$(history | tail -1 | sed "s/^[ ]*[0-9]*[ ]*//")
   if [ "$last_command" != "clear" ]; then
     echo
