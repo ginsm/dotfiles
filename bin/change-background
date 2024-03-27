@@ -1,4 +1,5 @@
-#!/usr/bin/env python3.12
+#!/usr/bin/env python3
+# You may need to change the shebang above to your specific python version.
 import re
 import os
 import sys
@@ -13,6 +14,9 @@ def change_background():
         os.environ.get('WSL_SETTINGS_FILE', ""),
         os.environ.get('WSL_BACKGROUNDS_PATH', "")
     ]
+
+    # Feel free to update this to match whatever file types you want matched.
+    # And update the alias as well, if you use it. :)
     supported_file_types = ['gif', 'jpeg', 'jpg', 'png', 'webp']
 
     # Exit script if missing or invalid paths
@@ -48,8 +52,6 @@ def change_background():
         settings = fp.read()
 
         # Replace the image name in settings
-        # Feel free to update this regex to match whatever file types you want matched.
-        # And update the alias as well, if you use it. :)
         file_types_str = '|'.join(supported_file_types)
         regex = r'[\w_\-\(\)\.,]+\.({})'.format(file_types_str)
         new_content = re.sub(regex, new_background, settings)
