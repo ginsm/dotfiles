@@ -6,6 +6,15 @@ import sys
 
 
 def change_background():
+    # Exit script if argument wasn't provided
+    if not len(sys.argv) > 1:
+        print('Usage: change-background <image.gif>')
+        return
+
+    # Get the argument
+    new_background = sys.argv[1]
+    new_background_ext = new_background.split('.')[-1]
+
     # Set these in your .bashrc, .zshrc, etc. Here's a couple examples:
     # export WSL_SETTINGS_FILE="/mnt/c/Users/username/AppData/Local/Packages/Microsoft.WindowsTerminal_xxxx/LocalState/settings.json"
     # export WSL_BACKGROUNDS_PATH="/mnt/c/Users/username/Pictures/Backgrounds/"
@@ -27,15 +36,6 @@ def change_background():
     if not os.path.exists(backgrounds_path):
         print(f"Error: WSL_BACKGROUNDS_PATH doesn't exist: {backgrounds_path}.")
         return
-
-    # Exit script if argument wasn't provided
-    if not len(sys.argv) > 1:
-        print('Usage: change-background <image.gif>')
-        return
-
-    # Get the argument
-    new_background = sys.argv[1]
-    new_background_ext = new_background.split('.')[-1]
 
     # Exit script if file doesn't exist
     if not os.path.exists(os.path.join(backgrounds_path, new_background)):
