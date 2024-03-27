@@ -30,6 +30,9 @@ alias gdc="git diff --cached"
 alias gp='git push'
 alias gf='git fetch'
 
+# Change wallpaper in WSL
+alias chwall='ls /mnt/e/User/Pictures/Terminal\ Backgrounds | fzf --query .gif --reverse --border=sharp --margin=1% --padding=1% --header="Choose a wallpaper" --header-first --no-info | xargs change-background'
+
 # Source any local aliases.
 if [ -f "$ALIASES.local" ]; then
   . "$ALIASES.local"
