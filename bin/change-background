@@ -35,16 +35,17 @@ def change_background():
 
     # Get the argument
     new_background = sys.argv[1]
+    new_background_ext = new_background.split('.')[-1]
 
-    # Check if the background's extension is supported; exit if it's not.
+    # Exit script if file doesn't exist
+    if not os.path.exists(os.path.join(backgrounds_path, new_background)):
+        print(f"Error: {new_background} doesn't exist within {backgrounds_path}.")
+        return
+
+    # Exit script if file ext isn't supported
     new_background_ext = new_background.split('.')[-1]
     if not new_background_ext in supported_file_types:
         print(f'Error: File type {new_background_ext} is not supported.')
-        return
-
-    # Check if new background path exists
-    if not os.path.exists(os.path.join(backgrounds_path, new_background)):
-        print(f"Error: {new_background} doesn't exist within {backgrounds_path}.")
         return
 
     # Update background image and write to settings
