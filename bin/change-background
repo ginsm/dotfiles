@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # You may need to change the shebang above to your specific python version.
-import re
+import json
 import os
+import subprocess
 import sys
 
 
@@ -13,54 +14,58 @@ def change_background():
 
     # Get the argument
     new_background = sys.argv[1]
-    new_background_ext = new_background.split('.')[-1]
+    new_background_abs = os.path.abspath(new_background)
 
     # Set these in your .bashrc, .zshrc, etc. Here's a couple examples:
     # export WSL_SETTINGS_FILE="/mnt/c/Users/username/AppData/Local/Packages/Microsoft.WindowsTerminal_xxxx/LocalState/settings.json"
     # export WSL_BACKGROUNDS_PATH="/mnt/c/Users/username/Pictures/Backgrounds/"
     # Make sure the backgrounds path is not set to somewhere within your WSL volume(s).
     settings_path, backgrounds_path = [
-        os.environ.get('WSL_SETTINGS_FILE', ""),
-        os.environ.get('WSL_BACKGROUNDS_PATH', "")
+        os.environ.get('WSL_SETTINGS_FILE', ""),  # This is required.
+        os.environ.get('WSL_BACKGROUNDS_PATH', "") # This isn't required, but may be useful.
     ]
 
-    # Feel free to update this to match whatever file types you want matched.
-    # And update the alias as well, if you use it. :)
-    supported_file_types = ['gif', 'jpeg', 'jpg', 'png', 'webp']
-
-    # Exit script if missing or invalid paths
+    # Exit script if missing or invalid settings path
     if not os.path.exists(settings_path):
         print(f"Error: WSL_SETTINGS_FILE doesn't exist: {settings_path}.")
         return
     
-    if not os.path.exists(backgrounds_path):
-        print(f"Error: WSL_BACKGROUNDS_PATH doesn't exist: {backgrounds_path}.")
-        return
+    # Determines if the argument is in an abspath or located in $WSL_BACKGROUNDS_PATH
+    if os.path.exists(new_background_abs):
+        new_background_path = new_background_abs
+    else:
+        # Exit script if the backgrounds_path is missing or non-existent
+        if not os.path.exists(backgrounds_path):
+            print(f"Error: WSL_BACKGROUNDS_PATH doesn't exist: {backgrounds_path}.")
+            return
+        
+        # Exit script if the file doesn't exist within backgrounds_path
+        if not os.path.exists(os.path.join(backgrounds_path, new_background)):
+            print(f"Error: {new_background} doesn't exist within {backgrounds_path}.")
+            return
+        
+        new_background_path = os.path.join(backgrounds_path, new_background)
 
-    # Exit script if file doesn't exist
-    if not os.path.exists(os.path.join(backgrounds_path, new_background)):
-        print(f"Error: {new_background} doesn't exist within {backgrounds_path}.")
-        return
 
-    # Exit script if file ext isn't supported
-    new_background_ext = new_background.split('.')[-1]
-    if not new_background_ext in supported_file_types:
-        print(f'Error: File type {new_background_ext} is not supported.')
-        return
-
-    # Update background image and write to settings
+    # # Update background image and write to settings
     with open(settings_path, 'r+') as fp:
-        settings = fp.read()
+        settings = json.load(fp)
+        
+        # Convert the path to wsl format and strip newline characters
+        new_background_path = convert_wsl_path(new_background_path).strip()
 
         # Replace the image name in settings
-        file_types_str = '|'.join(supported_file_types)
-        regex = r'[\w_\-\(\)\.,]+\.({})'.format(file_types_str)
-        new_content = re.sub(regex, new_background, settings)
+        settings["profiles"]["defaults"]["backgroundImage"] = new_background_path
 
-        # Write to the file
+        # Write the modified JSON back to the file
         fp.seek(0)
         fp.truncate()  # Truncate the file to remove existing content
-        fp.write(new_content)
+        json.dump(settings, fp, indent=4)
+
+
+def convert_wsl_path(path):
+    converted = subprocess.check_output(f"wslpath -w '{path}'", shell=True).decode('UTF-8')
+    return converted.replace('\\', '\\\\\\\\')
 
 
 if __name__ == "__main__":
