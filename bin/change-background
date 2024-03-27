@@ -13,6 +13,7 @@ def change_background():
         os.environ.get('WSL_SETTINGS_FILE', ""),
         os.environ.get('WSL_BACKGROUNDS_PATH', "")
     ]
+    supported_file_types = ['gif', 'jpeg', 'jpg', 'png', 'webp']
 
     # Exit script if missing or invalid paths
     if not os.path.exists(settings_path):
@@ -29,21 +30,28 @@ def change_background():
         return
 
     # Get the argument
-    new_background = sys.argv[1:][0]
+    new_background = sys.argv[1]
+
+    # Check if the background's extension is supported; exit if it's not.
+    new_background_ext = new_background.split('.')[-1]
+    if not new_background_ext in supported_file_types:
+        print(f'Error: File type {new_background_ext} is not supported.')
+        return
 
     # Check if new background path exists
     if not os.path.exists(os.path.join(backgrounds_path, new_background)):
         print(f"Error: {new_background} doesn't exist within {backgrounds_path}.")
         return
 
-    # Update settings file and overwrite contents
+    # Update background image and write to settings
     with open(settings_path, 'r+') as fp:
         settings = fp.read()
 
         # Replace the image name in settings
         # Feel free to update this regex to match whatever file types you want matched.
         # And update the alias as well, if you use it. :)
-        regex = r'[\w_\-\(\)\.,]+\.(gif|jpg|jpeg|png|webp)'
+        file_types_str = '|'.join(supported_file_types)
+        regex = r'[\w_\-\(\)\.,]+\.({})'.format(file_types_str)
         new_content = re.sub(regex, new_background, settings)
 
         # Write to the file
