@@ -41,6 +41,8 @@ precmd() {
 # Start Starship
 eval "$(starship init zsh)"
 
+# Start zoxide
+eval "$(zoxide init --cmd cd zsh)"
 
 # ANCHOR - SDKMAN
 export SDKMAN_DIR="$HOME/.sdkman"
