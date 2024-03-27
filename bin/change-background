@@ -19,7 +19,6 @@ def change_background():
     # Set these in your .bashrc, .zshrc, etc. Here's a couple examples:
     # export WSL_SETTINGS_FILE="/mnt/c/Users/username/AppData/Local/Packages/Microsoft.WindowsTerminal_xxxx/LocalState/settings.json"
     # export WSL_BACKGROUNDS_PATH="/mnt/c/Users/username/Pictures/Backgrounds/"
-    # Make sure the backgrounds path is not set to somewhere within your WSL volume(s).
     settings_path, backgrounds_path = [
         os.environ.get('WSL_SETTINGS_FILE', ""),  # This is required.
         os.environ.get('WSL_BACKGROUNDS_PATH', "") # This isn't required, but may be useful.
