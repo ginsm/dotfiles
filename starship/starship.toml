@@ -54,8 +54,7 @@ read_only = "  "
 format = "[$path]($style)[$read_only]($read_only_style) "
 
 [git_branch]
-symbol = ""
-format = "on [$symbol$branch]($style) "
+format = " [$symbol$branch]($style) "
 truncation_length = 16
 truncation_symbol = "…/"
 style = "bold green"
@@ -76,20 +75,30 @@ format = "via [ $context](bold blue) "
 format = "via [ $version](bold purple) "
 
 [python]
-format ='[\(${symbol}${pyenv_prefix}(${version})(\\($virtualenv\\) )\)]($style)'
+format ='[${symbol}${pyenv_prefix}(${version})(\\($virtualenv\\) )]($style)'
 version_format = "v${major}.${minor}"
 symbol = " "
+disabled = true
+
+[java]
+format = " [$symbol$version]($style) "
+disabled = true
+
+[gradle]
+format = " [$symbol$version]($style) "
+disabled = true
 
 [nodejs]
-format = "via [ $version](bold green) "
+format = "[ $version](bold green) "
 disabled = true
 
 [ruby]
-format = "via [ $version]($style) "
+format = "[ $version]($style) "
+disabled = true
 
 [kubernetes]
 format = 'on [ $context\($namespace\)](bold purple) '
-disabled = false
+disabled = true
 [kubernetes.context_aliases]
 "clcreative-k8s-staging" = "cl-k8s-staging"
 "clcreative-k8s-production" = "cl-k8s-prod"
