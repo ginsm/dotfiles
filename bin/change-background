@@ -1,8 +1,14 @@
 #!/usr/bin/env python3.12
-import re, os, sys
+import re
+import os
+import sys
 
 
 def change_background():
+    # Set these in your .bashrc, .zshrc, etc. Here's a couple examples:
+    # export WSL_SETTINGS_FILE="/mnt/c/Users/username/AppData/Local/Packages/Microsoft.WindowsTerminal_xxxx/LocalState/settings.json"
+    # export WSL_BACKGROUNDS_PATH="/mnt/c/Users/username/Pictures/Backgrounds/"
+    # Make sure the backgrounds path is not set to somewhere within your WSL volume(s).
     settings_path, backgrounds_path = [
         os.environ.get('WSL_SETTINGS_FILE', ""),
         os.environ.get('WSL_BACKGROUNDS_PATH', "")
@@ -35,9 +41,12 @@ def change_background():
         settings = fp.read()
 
         # Replace the image name in settings
-        new_content = re.sub(r'[\w_\-\(\)\.,]+\.gif', new_background, settings)
+        # Feel free to update this regex to match whatever file types you want matched.
+        # And update the alias as well, if you use it. :)
+        regex = r'[\w_\-\(\)\.,]+\.(gif|jpg|jpeg|png|webp)'
+        new_content = re.sub(regex, new_background, settings)
 
-        # WRite to the file
+        # Write to the file
         fp.seek(0)
         fp.truncate()  # Truncate the file to remove existing content
         fp.write(new_content)
