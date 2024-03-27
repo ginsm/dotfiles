@@ -32,6 +32,10 @@ alias gf='git fetch'
 alias gr='git reset'
 alias gl='git log'
 
+# Python aliases
+alias python='python3.12'
+alias py='python'
+alias pip='pip3.12'
 # Change wallpaper in WSL using fzf
 alias chwall='ls $WSL_BACKGROUNDS_PATH | fzf --query=".gif | .jpg | .jpeg | .png | .webp " --reverse --border=sharp --margin=1% --padding=1% --header="Choose a wallpaper" --header-first --no-info | xargs change-background'
 
