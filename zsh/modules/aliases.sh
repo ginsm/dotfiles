@@ -25,6 +25,7 @@ alias gc='git commit'
 alias gcm='git commit -m'
 alias gs='git status'
 alias ga='git add'
+alias gaf='git ls-files -m -o --exclude-standard | fzf -m --print0 --reverse --border=sharp --margin=1% --padding=1% --header="Choose files to add" --header-first --no-info | xargs -0 -r -o git add'
 alias gd='git diff'
 alias gdc="git diff --cached"
 alias gp='git push'
