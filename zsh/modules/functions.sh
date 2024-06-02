@@ -35,3 +35,13 @@ function prompt_user() {
 
   echo -e "$answer";
 }
+
+# Archive git branches
+function archive_branch() {
+  git checkout main
+  git tag archive/$1 $1
+  git branch -D $1
+  git branch -d -r origin/$1
+  git push --tags
+  git push origin :$1
+}
