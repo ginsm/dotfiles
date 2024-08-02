@@ -53,3 +53,20 @@ function fix_zsh_history() {
   fc -R ~/.zsh_history
   rm ~/.zsh_history_bad
 }
+
+function trim_video() {
+  video=$1
+  output=$2
+  start=$3
+  end=$4
+
+  if [[ -z "${video}" || -z "${output}" || -z "${start}" ]]; then
+    echo "usage: trim_video <video> <output> <end> [start]"
+  else
+    if [[ -z "${end}" ]]; then
+      end=$start
+      start="00:00:00"
+    fi
+    ffmpeg -i "$video" -ss "$start" -to "$end" -c:v copy -c:a copy "$output"
+  fi
+}
