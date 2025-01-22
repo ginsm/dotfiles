@@ -61,12 +61,37 @@ function trim_video() {
   end=$4
 
   if [[ -z "${video}" || -z "${output}" || -z "${start}" ]]; then
-    echo "usage: trim_video <video> <output> <end> [start]"
+    echo "usage: trim_video <video> <output> <end|start> [end]"
   else
     if [[ -z "${end}" ]]; then
       end=$start
       start="00:00:00"
     fi
     ffmpeg -i "$video" -ss "$start" -to "$end" -c:v copy -c:a copy "$output"
+  fi
+}
+
+# Opens the github repo in your browser
+function gh() {(
+    set -e
+    git remote -v | grep push 2> /dev/null
+    remote=${1:-origin}
+    echo "Using remote $remote"
+
+    URL=$(git config remote.$remote.url | sed "s/git@\(.*\):\(.*\).git/https:\/\/\1\/\2/")
+    echo "Opening $URL..."
+    open $URL
+)}
+
+# Change wallpaper in WSL using fzf
+function chwall() {
+  local image_path="${1:-$WSL_BACKGROUNDS_PATH}"
+  # Use null character as delimiter for fzf output
+  selected_file=$(ls -1 "$image_path" | fzf --query=".gif | .jpg | .jpeg | .png | .webp " --reverse --border=sharp --margin=1% --padding=1% --header="Choose a wallpaper" --header-first --no-info --print0)
+
+  # Check if a file was selected
+  if [ -n "$selected_file" ]; then
+    # Use null character as delimiter for xargs input
+    echo "$selected_file" | xargs -0 change-background
   fi
 }
