@@ -19,6 +19,7 @@ addalias() {
 
   # Create the local aliases file
   if [ ! -f "$local_aliases" ]; then
+    mkdir -p "$( dirname -- "$local_aliases" )"
     touch "$local_aliases"
     {
       echo -e "#!/bin/sh"
